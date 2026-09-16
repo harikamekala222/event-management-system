@@ -6,31 +6,46 @@ on:
       - main
 
 jobs:
-
   deploy:
-    name: Deploy to EC2
+    name: Deploy Docker Application to EC2
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy to EC2
+      - name: Deploy Docker Application to EC2
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           port: ${{ secrets.EC2_PORT }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
 
           script: |
+            echo "Connected to EC2"
+
             cd /opt/event-management-system/app
 
+            echo "Current directory:"
+            pwd
+
+            echo "Pulling latest code..."
             git fetch origin main
             git reset --hard origin/main
 
+            echo "Checking Docker..."
+            docker --version
+            docker compose version
+
+            echo "Building Docker images..."
             docker compose build
+
+            echo "Starting Docker containers..."
             docker compose up -d
 
+            echo "Docker containers:"
             docker compose ps
+
+            echo "Deployment completed"
