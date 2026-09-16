@@ -1,6 +1,6 @@
 # Event Management System
 
-A full-stack Event Management System developed using:
+#A full-stack Event Management System developed using:
 
 - React
 - FastAPI
